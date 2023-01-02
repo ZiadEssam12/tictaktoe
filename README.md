@@ -34,12 +34,33 @@
 ## **Then after repeating The above then a win check start**   
 
 >check first row 
-
+>
 >check_secoend_row 
-
+>
 >check_third_row
 
 ### These Three procedures Checks a single row if there is similar symbols it increase a __win_flag__ 
+
+
+***
+
+### check columns
+
+>call check_first_column 
+>
+>call check_secoend_column
+> 
+>call check_third_column
+
+### These Three procedures Checks a single column if there is similar symbols it increase a __win_flag__
+***
+### check diagonal
+>check_first_diagonal
+>
+>check_secoend_diagonal
+
+### These Three procedures Checks diagonal if there is similar symbols it increase a __win_flag__
+***
 
 ```
 cmp win_flag,2
@@ -58,5 +79,24 @@ mov win_flag,0
 ```
 #### Reset the win_flag counter
 
-
 ***
+
+>chang_player_symbol
+### This changes the symbol of the player if it was (X) Then it will be (O) and so on
+***
+
+## Then the game loop ends and if no one won the program will execute the next and exit the game
+```
+lea dx,no_winner_ms ;; equal
+call print
+jmp exit
+```
+***
+
+> print proc
+### input
+> **The offset in dx** 
+### output
+> **The string that dx refere to**
+
+
