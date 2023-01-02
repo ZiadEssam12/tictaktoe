@@ -39,7 +39,7 @@
 >
 >check_third_row
 
-### These Three procedures Checks a single row if there is similar symbols it increase a __win_flag__ 
+### These Three procedures Checks a single row if there is similar symbols it increase a __win_flag__ by comparing the value of the offset of the each row cells
 
 
 ***
@@ -52,14 +52,14 @@
 > 
 >call check_third_column
 
-### These Three procedures Checks a single column if there is similar symbols it increase a __win_flag__
+### These Three procedures Checks a single column if there is similar symbols it increase a __win_flag__ by comparing the value of the offset of the each column cells 
 ***
 ### check diagonal
 >check_first_diagonal
 >
 >check_secoend_diagonal
 
-### These Three procedures Checks diagonal if there is similar symbols it increase a __win_flag__
+### These Two procedures Checks diagonal if there is similar symbols it increase a __win_flag__ by comparing the value of the offset of the diagonal cells 
 ***
 
 ```
@@ -99,4 +99,17 @@ jmp exit
 ### output
 > **The string that dx refere to**
 
+***
+>set_value proc
+### input
+> number in hexadecimal
+### output
+> compare the hexadecimal value with the number of cell which the player entered stored in the **al** if they equal then set the cell with player's symbol
+***
+>set_n_value 
+
+**Which n from first to ninth and refere to the game cells**
+
+### it uses the offset of the cell then write the symbol of the player on it
+***
 
