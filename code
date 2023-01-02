@@ -1,0 +1,621 @@
+   org 100h  
+
+
+.data
+;play places = game_draw{0,2,4  ,7,9,11  14, 16, 18 }   
+game_draw db "1|2|3", 13,10     
+          db "4|5|6", 13,10
+          db "7|8|9", 13,10, "$"  
+hello_message db "hello in our tick take game", 13,10,"the first player is (X) and the seconed is (o) ",13,10,"$" 
+enter_message db "enter number of place you want to play in ",13,10,"$"                                             
+
+player_symbol db "x"
+win_flag db ? 
+
+first_win_message db "the winner is first player <x>",13,10,"$"
+
+seconed_win_message db "the winner is seconed  player <o>",13,10,"$"
+
+no_winner_ms db "********nooo winner******",13,10,"$"
+
+;game_draw_pointers db offset [game_draw],offset[game_draw+2],offset[game_draw+4],offset [game_draw+7],offset [game_draw+9],offset [game_draw+11],offset [game_draw+14],offset [game_draw+16],offset [game_draw+18]
+
+new_line db 0dh,0ah ,"$" 
+error_message db "you must enter valid number pls try agine ",13,10,"$"    
+
+
+
+
+.code
+                                                                     
+
+main proc
+     
+ 
+lea dx,hello_message
+call print
+         
+lea dx,new_line 
+call print
+         
+lea dx,enter_message 
+call print
+
+lea dx,new_line 
+call print
+         
+lea dx,game_draw
+call print
+ 
+  
+lea dx,new_line 
+call print 
+
+mov cx,9  ;game counter 
+     
+game_loop:      
+call readfrom_keyboard  
+;mp set_value_place
+;et_value_place:
+call check_validaty 
+call set_value
+;lea dx,game_draw
+;call print
+
+call check_first_row
+cmp win_flag,2
+je print_winer
+
+mov win_flag,0 ;*******important to make win flage =0
+ 
+call check_secoend_row
+cmp win_flag,2
+je print_winer 
+               
+mov win_flag,0
+
+call check_thired_row
+cmp win_flag,2
+je print_winer 
+
+mov win_flag,0
+
+call check_first_colum
+cmp win_flag,2
+je print_winer 
+               
+mov win_flag,0 
+
+call check_secoend_colum
+cmp win_flag,2
+je print_winer 
+               
+mov win_flag,0
+
+call check_thired_colum
+cmp win_flag,2
+je print_winer 
+               
+mov win_flag,0
+
+call check_first_diagonal
+cmp win_flag,2
+je print_winer 
+               
+mov win_flag,0
+
+call check_secoend_diagonal
+cmp win_flag,2
+je print_winer 
+               
+mov win_flag,0
+
+
+;call print 
+
+;mov game_draw[0],"x" ; test case for input  
+;lea dx,game_draw
+;call print 
+
+
+
+call chang_player_symbol 
+loop game_loop
+ 
+;;flage !=2
+
+lea dx,no_winner_ms ;; equal
+call print
+jmp exit
+    
+print_winer:
+
+cmp player_symbol,"x"
+je print_first_winner
+
+lea dx,seconed_win_message ;else
+call print
+jmp exit
+
+
+print_first_winner:
+
+lea dx,first_win_message
+call print
+jmp exit
+   
+main endp
+jmp exit
+ 
+     
+;*********************************************************************************    
+print proc    ; print dx content you must load oggsit in dx my use lea  
+    mov     ah, 9
+    int     21h   
+    
+    print endp  
+      ret 
+;*********************************************************************************      
+readfrom_keyboard proc  ; read from keybord and return content in al
+    mov     ah, 1       
+    int     21h  
+  
+   readfrom_keyboard endp
+    ret
+;********************************************************************************* 
+set_value proc
+
+cmp al ,31h
+je set_first_value 
+
+
+cmp al ,32h 
+je set_second_value
+
+
+cmp al ,33h
+je set_third_value
+
+
+cmp al ,34h 
+je set_forth_value
+
+
+cmp al ,35h
+je set_fifth_value
+
+cmp al ,36h 
+je set_sixth_value
+
+
+cmp al ,37h 
+je set_seveth_value
+
+
+cmp al ,38h
+je set_eighth_value
+
+
+cmp al ,39h
+je set_ninth_value
+    
+  
+set_first_value:
+mov ah ,player_symbol 
+mov game_draw[0] , ah  
+lea dx,new_line 
+call print 
+lea dx,game_draw 
+call print 
+ret 
+
+set_second_value:
+mov ah ,player_symbol
+mov game_draw[2] , ah  
+lea dx,new_line 
+call print  
+lea dx,game_draw 
+call print
+ret
+
+set_third_value:
+mov ah ,player_symbol 
+mov game_draw[4] ,  ah  
+lea dx,new_line 
+call print
+lea dx,game_draw 
+call print
+ret
+   
+set_forth_value:
+mov ah ,player_symbol
+mov game_draw[7] ,  ah  
+lea dx,new_line 
+call print
+lea dx,game_draw 
+call print
+ret 
+
+set_fifth_value:
+mov ah ,player_symbol 
+mov game_draw[9] ,  ah  
+lea dx,new_line 
+call print
+lea dx,game_draw 
+call print
+ret 
+
+set_sixth_value:
+mov ah ,player_symbol
+mov game_draw[11] ,  ah  
+lea dx,new_line 
+call print 
+lea dx,game_draw 
+call print
+ret
+
+ 
+set_seveth_value:
+mov ah ,player_symbol
+mov game_draw[14] ,  ah  
+lea dx,new_line 
+call print
+lea dx,game_draw 
+call print
+ret 
+
+set_eighth_value:
+mov ah ,player_symbol 
+mov game_draw[16] ,  ah  
+lea dx,new_line 
+call print
+lea dx,game_draw 
+call print
+ret 
+
+set_ninth_value:
+mov ah ,player_symbol 
+mov game_draw[18] ,  ah  
+lea dx,new_line 
+call print
+lea dx,game_draw 
+call print
+ret          
+       
+set_value endp
+   ret
+;****************************************************************************    
+chang_player_symbol proc
+cmp player_symbol,"x"   ;if player is x we will change it to o
+je chang_playero
+
+mov player_symbol,"x" ; if player is o we wii change it to X  
+ret 
+
+chang_playero:
+mov player_symbol,"o"
+ret     
+    
+chang_player_symbol endp            
+ret  
+;*************************************************************************************
+;checks for all rows 
+check_first_row proc
+mov ah,game_draw[0] 
+cmp game_draw[2],ah
+je increment_flag_fr 
+ret
+
+
+increment_flag_fr:
+call increment_win_flag    
+ 
+cmp ah,game_draw[4]
+je se_comp
+ret
+
+se_comp:
+call increment_win_flag 
+ret
+
+ ret    
+
+
+check_first_row endp
+ret
+
+check_secoend_row proc
+mov ah,game_draw[7] 
+cmp game_draw[9],ah
+je increment_flag_sr
+ret
+
+increment_flag_sr:
+call increment_win_flag 
+
+cmp ah,game_draw[11]
+je se_co
+ ret
+ 
+se_co:
+call increment_win_flag     
+ret
+    
+check_secoend_row endp
+ret
+
+check_thired_row proc
+mov ah,game_draw[14] 
+cmp game_draw[16],ah
+je increment_flag_thr 
+ret
+
+increment_flag_thr:
+call increment_win_flag     
+    
+cmp ah,game_draw[18]
+je th_co
+ ret
+ 
+th_co:
+call increment_win_flag
+ret 
+ 
+check_thired_row endp
+ret
+;*********************************************************************
+increment_win_flag proc
+    
+inc win_flag
+   
+increment_win_flag endp
+ret 
+;********************************************************************
+
+;********************************************************************************
+;check for all columes 
+
+check_first_colum proc
+mov ah,game_draw[0] 
+cmp game_draw[7],ah
+je increment_flag_fc 
+ret
+
+
+increment_flag_fc:
+call increment_win_flag    
+ 
+cmp ah,game_draw[14]
+je se_comp_col
+ret
+
+se_comp_col:
+call increment_win_flag 
+ret
+
+ ret    
+
+
+check_first_colum endp
+ret
+
+check_secoend_colum proc
+mov ah,game_draw[2] 
+cmp game_draw[9],ah
+je increment_flag_sc
+ret
+
+increment_flag_sc:
+call increment_win_flag 
+
+cmp ah,game_draw[16]
+je sec_co
+ ret
+ 
+sec_co:
+call increment_win_flag     
+ret
+    
+check_secoend_colum endp
+ret
+
+check_thired_colum proc
+mov ah,game_draw[4] 
+cmp game_draw[11],ah
+je increment_flag_thc 
+ret
+
+increment_flag_thc:
+call increment_win_flag     
+    
+cmp ah,game_draw[18]
+je thc_co
+ ret
+ 
+thc_co:
+call increment_win_flag
+ret 
+ 
+check_thired_colum endp
+ret 
+
+;*****************************************************************
+;check for diagonals
+;*****************************************************************
+
+check_first_diagonal proc
+mov ah,game_draw[0] 
+cmp game_draw[9],ah
+je increment_flag_fd 
+ret
+
+
+increment_flag_fd:
+call increment_win_flag    
+ 
+cmp ah,game_draw[18]
+je sed_comp
+ret
+
+sed_comp:
+call increment_win_flag 
+ret
+
+ ret    
+
+
+check_first_diagonal endp
+ret
+
+check_secoend_diagonal proc
+mov ah,game_draw[4] 
+cmp game_draw[9],ah
+je increment_flag_sd
+ret
+
+increment_flag_sd:
+call increment_win_flag 
+
+cmp ah,game_draw[14]
+je sed_co
+ ret
+ 
+sed_co:
+call increment_win_flag     
+ret
+    
+check_secoend_diagonal endp
+ret
+
+;***************************************************************   
+check_validaty proc
+
+cmp al ,31h
+je check_first_value 
+
+
+cmp al ,32h 
+je check_second_value
+
+
+cmp al ,33h
+je check_third_value
+
+
+cmp al ,34h 
+je check_forth_value
+
+
+cmp al ,35h
+je check_fifth_value
+
+cmp al ,36h 
+je check_sixth_value
+
+
+cmp al ,37h 
+je check_seveth_value
+
+
+cmp al ,38h
+je check_eighth_value
+
+
+cmp al ,39h
+je check_ninth_value 
+
+lea dx,error_message
+call print
+jmp game_loop
+
+error:
+;inc cx
+lea dx,new_line 
+call print
+lea dx,error_message  
+call print
+;mov dx,0
+inc cx
+jmp exit     
+
+  
+check_first_value:
+
+cmp game_draw[0] , "x" 
+je error
+
+cmp game_draw[0] , "o" 
+je error
+ret 
+
+check_second_value:
+cmp game_draw[2] , "x" 
+je error
+
+cmp game_draw[2] , "o" 
+je error
+ret 
+
+check_third_value:
+cmp game_draw[4] , "x" 
+je error
+
+cmp game_draw[4] , "o" 
+je error
+ret 
+   
+check_forth_value:
+cmp game_draw[7] , "x" 
+je error
+
+cmp game_draw[7] , "o" 
+je error
+ret 
+
+check_fifth_value:
+cmp game_draw[9] , "x" 
+je error
+
+cmp game_draw[9] , "o" 
+je error
+ret 
+
+check_sixth_value:
+cmp game_draw[11] , "x" 
+je error
+
+cmp game_draw[11] , "o" 
+je error
+ret
+
+ 
+check_seveth_value:
+cmp game_draw[14] , "x" 
+je error
+
+cmp game_draw[14] , "o" 
+je error
+ret  
+
+check_eighth_value:
+cmp game_draw[16] , "x" 
+je error
+
+cmp game_draw[16] , "o" 
+je error
+ret 
+
+check_ninth_value:
+cmp game_draw[18] , "x" 
+je error
+
+cmp game_draw[18] , "o" 
+je error
+ret               
+ 
+check_validaty endp 
+
+exit:ret
+end            
+
+
