@@ -1,27 +1,36 @@
-   org 100h  
-
+org 100h  
 
 .data
 ;play places = game_draw{0,2,4  ,7,9,11  14, 16, 18 }   
 game_draw db "1|2|3", 13,10     
           db "4|5|6", 13,10
-          db "7|8|9", 13,10, "$"  
+          db "7|8|9", 13,10, "$" 
+
+; welcome megssage           
 hello_message db "hello in our tick take game", 13,10,"the first player is (X) and the seconed is (o) ",13,10,"$" 
 enter_message db "enter number of place you want to play in ",13,10,"$"                                             
 
+
+; first plyer symbol and it is changed after each movement
 player_symbol db "x"
+
+
 win_flag db ? 
 
-first_win_message db "the winner is first player <x>",13,10,"$"
 
-seconed_win_message db "the winner is seconed  player <o>",13,10,"$"
+; prinintg the winner when the game is done
+first_win_message db "the winner is first player <X>",13,10,"$"
+seconed_win_message db "the winner is seconed  player <O>",13,10,"$"
+no_winner_ms db "--------> no winner the game is draw <--------",13,10,"$"
 
-no_winner_ms db "********nooo winner******",13,10,"$"
 
-;game_draw_pointers db offset [game_draw],offset[game_draw+2],offset[game_draw+4],offset [game_draw+7],offset [game_draw+9],offset [game_draw+11],offset [game_draw+14],offset [game_draw+16],offset [game_draw+18]
+new_line db 0dh,0ah ,"$"
+; taking input message
+input_message db  "player <X> enter a number :",13,10,"$"
+input_message2 db "player <O> enter a number :",13,10,"$"
 
-new_line db 0dh,0ah ,"$" 
-error_message db "you must enter valid number pls try agine ",13,10,"$"    
+ 
+error_message db  "you must enter valid number please try agine ",13,10,"$"    
 
 
 
@@ -29,9 +38,7 @@ error_message db "you must enter valid number pls try agine ",13,10,"$"
 .code
                                                                      
 
-main proc
-     
- 
+main proc  
 lea dx,hello_message
 call print
          
@@ -53,81 +60,79 @@ call print
 
 mov cx,9  ;game counter 
      
-game_loop:      
-call readfrom_keyboard  
-;mp set_value_place
-;et_value_place:
-call check_validaty 
-call set_value
-;lea dx,game_draw
-;call print
-
-call check_first_row
-cmp win_flag,2
-je print_winer
-
-mov win_flag,0 ;*******important to make win flage =0
- 
-call check_secoend_row
-cmp win_flag,2
-je print_winer 
-               
-mov win_flag,0
-
-call check_thired_row
-cmp win_flag,2
-je print_winer 
-
-mov win_flag,0
-
-call check_first_colum
-cmp win_flag,2
-je print_winer 
-               
-mov win_flag,0 
-
-call check_secoend_colum
-cmp win_flag,2
-je print_winer 
-               
-mov win_flag,0
-
-call check_thired_colum
-cmp win_flag,2
-je print_winer 
-               
-mov win_flag,0
-
-call check_first_diagonal
-cmp win_flag,2
-je print_winer 
-               
-mov win_flag,0
-
-call check_secoend_diagonal
-cmp win_flag,2
-je print_winer 
-               
-mov win_flag,0
+game_loop:
+         
+    lea dx,new_line 
+    call print 
+    
+    call print_turn
+         
+    call readfrom_keyboard
 
 
-;call print 
-
-;mov game_draw[0],"x" ; test case for input  
-;lea dx,game_draw
-;call print 
-
-
-
-call chang_player_symbol 
+    call check_validaty 
+    call set_value
+    
+    
+    call check_first_row
+    cmp win_flag,2
+    je print_winer
+    
+    mov win_flag,0 ;*******important to make win flage =0
+     
+    call check_secoend_row
+    cmp win_flag,2
+    je print_winer 
+                   
+    mov win_flag,0
+    
+    call check_third_row
+    cmp win_flag,2
+    je print_winer 
+    
+    mov win_flag,0
+    
+    call check_first_column
+    cmp win_flag,2
+    je print_winer 
+                   
+    mov win_flag,0 
+    
+    call check_secoend_column
+    cmp win_flag,2
+    je print_winer 
+                   
+    mov win_flag,0
+    
+    call check_third_column
+    cmp win_flag,2
+    je print_winer 
+                   
+    mov win_flag,0
+    
+    call check_first_diagonal
+    cmp win_flag,2
+    je print_winer 
+                   
+    mov win_flag,0
+    
+    call check_secoend_diagonal
+    cmp win_flag,2
+    je print_winer 
+                   
+    mov win_flag,0
+    
+    call chang_player_symbol
+     
 loop game_loop
  
-;;flage !=2
+;flage !=2
 
-lea dx,no_winner_ms ;; equal
+lea dx,no_winner_ms 
 call print
 jmp exit
-    
+
+;for print winner     
 print_winer:
 
 cmp player_symbol,"x"
@@ -143,28 +148,38 @@ print_first_winner:
 lea dx,first_win_message
 call print
 jmp exit
-   
+  
 main endp
-jmp exit
+
  
      
+;********************************************************************************* 
+
+                        ; print dx content you must load oggsit in dx my use lea
+                        
 ;*********************************************************************************    
-print proc    ; print dx content you must load oggsit in dx my use lea  
+print proc      
     mov     ah, 9
     int     21h   
-    
-    print endp  
-      ret 
-;*********************************************************************************      
-readfrom_keyboard proc  ; read from keybord and return content in al
+    ret
+print endp  
+     
+;*********************************************************************************
+
+                        ; read from keybord and return content in al
+                        
+;*********************************************************************************                                          
+readfrom_keyboard proc  
     mov     ah, 1       
     int     21h  
-  
-   readfrom_keyboard endp
     ret
+ readfrom_keyboard endp
+    
 ;********************************************************************************* 
 set_value proc
 
+
+; --------------------> comparing the input with 1 to 9 <--------------------
 cmp al ,31h
 je set_first_value 
 
@@ -198,8 +213,9 @@ je set_eighth_value
 
 cmp al ,39h
 je set_ninth_value
-    
-  
+ret    
+
+; --------------------> setting the input into its cell <--------------------  
 set_first_value:
 mov ah ,player_symbol 
 mov game_draw[0] , ah  
@@ -283,23 +299,25 @@ call print
 ret          
        
 set_value endp
-   ret
-;****************************************************************************    
+   
+;*************************************************************************************    
 chang_player_symbol proc
-cmp player_symbol,"x"   ;if player is x we will change it to o
+cmp player_symbol,"x"       ;if player is x we will change it to o
 je chang_playero
 
-mov player_symbol,"x" ; if player is o we wii change it to X  
+mov player_symbol,"x"       ; if player is o we wii change it to X  
 ret 
 
 chang_playero:
 mov player_symbol,"o"
-ret     
-    
+ret        
 chang_player_symbol endp            
-ret  
+  
+;************************************************************************************* 
+
+                                    ;check for rows
+                                    
 ;*************************************************************************************
-;checks for all rows 
 check_first_row proc
 mov ah,game_draw[0] 
 cmp game_draw[2],ah
@@ -320,10 +338,8 @@ ret
 
  ret    
 
-
 check_first_row endp
-ret
-
+;***************************************Second Row************************************
 check_secoend_row proc
 mov ah,game_draw[7] 
 cmp game_draw[9],ah
@@ -339,12 +355,11 @@ je se_co
  
 se_co:
 call increment_win_flag     
-ret
-    
+ret    
 check_secoend_row endp
-ret
+;***************************************Third Row************************************
 
-check_thired_row proc
+check_third_row proc
 mov ah,game_draw[14] 
 cmp game_draw[16],ah
 je increment_flag_thr 
@@ -360,22 +375,21 @@ je th_co
 th_co:
 call increment_win_flag
 ret 
- 
-check_thired_row endp
-ret
-;*********************************************************************
+check_third_row endp
+;*************************************************************************************
 increment_win_flag proc
     
 inc win_flag
-   
+ret   
 increment_win_flag endp
-ret 
-;********************************************************************
+ 
+;************************************************************************************* 
 
-;********************************************************************************
-;check for all columes 
+                                    ;check for columns
+                                    
+;************************************************************************************* 
 
-check_first_colum proc
+check_first_column proc
 mov ah,game_draw[0] 
 cmp game_draw[7],ah
 je increment_flag_fc 
@@ -394,12 +408,10 @@ call increment_win_flag
 ret
 
  ret    
+check_first_column endp
+;***************************************Second column********************************
 
-
-check_first_colum endp
-ret
-
-check_secoend_colum proc
+check_secoend_column proc
 mov ah,game_draw[2] 
 cmp game_draw[9],ah
 je increment_flag_sc
@@ -414,12 +426,11 @@ je sec_co
  
 sec_co:
 call increment_win_flag     
-ret
-    
-check_secoend_colum endp
-ret
+ret    
+check_secoend_column endp
+;***************************************Third column*********************************
 
-check_thired_colum proc
+check_third_column proc
 mov ah,game_draw[4] 
 cmp game_draw[11],ah
 je increment_flag_thc 
@@ -435,13 +446,12 @@ je thc_co
 thc_co:
 call increment_win_flag
 ret 
- 
-check_thired_colum endp
-ret 
+check_third_column endp
+;************************************************************************************* 
 
-;*****************************************************************
-;check for diagonals
-;*****************************************************************
+                                    ;check for diagonals
+                                    
+;*************************************************************************************
 
 check_first_diagonal proc
 mov ah,game_draw[0] 
@@ -461,11 +471,10 @@ sed_comp:
 call increment_win_flag 
 ret
 
- ret    
-
+ ret   
 
 check_first_diagonal endp
-ret
+;*************************************Second diagonal*********************************
 
 check_secoend_diagonal proc
 mov ah,game_draw[4] 
@@ -482,12 +491,13 @@ je sed_co
  
 sed_co:
 call increment_win_flag     
-ret
-    
+ret    
 check_secoend_diagonal endp
-ret
+;*************************************************************************************
 
-;***************************************************************   
+                                ;Check if the input is valid
+
+;*************************************************************************************   
 check_validaty proc
 
 cmp al ,31h
@@ -529,14 +539,14 @@ call print
 jmp game_loop
 
 error:
-;inc cx
 lea dx,new_line 
 call print
 lea dx,error_message  
 call print
-;mov dx,0
-inc cx
-jmp exit     
+mov dx,0
+lea dx,game_draw
+call print
+jmp game_loop     
 
   
 check_first_value:
@@ -611,11 +621,39 @@ je error
 
 cmp game_draw[18] , "o" 
 je error
-ret               
- 
+ret                
 check_validaty endp 
+;*************************************************************************************
+print_turn proc
+    
+    cmp player_symbol,"x"
+je first
 
-exit:ret
-end            
+lea dx,input_message2
+call print
+         
+lea dx,new_line 
+call print
+ret
+
+first:
+lea dx,input_message
+call print
+         
+    
+    ret
+print_turn endp 
+
+;*************************************************************************************
+ 
+                                    ;End the game
+
+;*************************************************************************************
+exit:
+
+MOV AH, 0
+INT 21H 
+
+End main             
 
 
